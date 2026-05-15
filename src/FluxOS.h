@@ -1,11 +1,13 @@
 #pragma once
 #include "screens/Screen.h"
+#include <LittleFS.h>
 
-extern int g_launchApp;
+extern int  g_launchApp;
+extern char g_openFile[64];
 
 class FluxOS {
 public:
-    static constexpr int MAX_APPS = 25;
+    static constexpr int MAX_APPS = 32;
     Screen* apps[MAX_APPS];
     int     numApps = 0;
     int     curApp  = -1;
@@ -17,6 +19,10 @@ public:
         M5.begin();
         M5.Lcd.setRotation(3);
         M5.Lcd.setBrightness(160);
+        LittleFS.begin(true);
+        LittleFS.mkdir("/notes");
+        LittleFS.mkdir("/drawings");
+        LittleFS.mkdir("/audio");
         _drawBoot();
         setApp(0);
     }
@@ -72,7 +78,9 @@ public:
         static const char* NAMES[] = {
             "FLUX","CLOCK","GYRO","AUDIO","WIFI","SNAKE","PONG",
             "IR","CONFIG","STOPWATCH","LEVEL","SYSMON","LIGHT",
-            "REACTION","BLE","DICE"
+            "REACTION","BLE","DICE","ALARM",
+            "TETRIS","BREAKOUT","FLAPPY","CALC","TALLY","METRO","ABOUT",
+            "FILES","EDITOR","DRAW","AUDIO R","POMODORO","WEATHER","NTP"
         };
         M5.Lcd.fillRect(0, 0, SCR_W, SB_H, C_PANEL);
         M5.Lcd.drawFastHLine(0, SB_H-1, SCR_W, C_ACCENT);
@@ -81,7 +89,7 @@ public:
         M5.Lcd.setTextColor(C_CYAN, C_PANEL);
         M5.Lcd.setTextSize(1);
         M5.Lcd.setCursor(4, 5);
-        if (curApp >= 0 && curApp < 16) M5.Lcd.print(NAMES[curApp]);
+        if (curApp >= 0 && curApp < 31) M5.Lcd.print(NAMES[curApp]);
 
         // time
         m5::rtc_time_t t; M5.Rtc.getTime(&t);

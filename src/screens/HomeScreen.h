@@ -5,7 +5,7 @@ extern int g_launchApp;
 // 3-page launcher, 8 icons per page (4×2)
 class HomeScreen : public Screen {
     static constexpr int PER_PAGE = 8;
-    static constexpr int TOTAL    = 23; // total non-home apps
+    static constexpr int TOTAL    = 30; // total non-home apps
 
     int sel  = 0;
     int page = 0;
@@ -27,6 +27,11 @@ class HomeScreen : public Screen {
         {"FLAPPY",   C_YELLOW,  1}, {"CALC",     C_GREEN,   7},
         {"TALLY",    C_PURPLE,  6}, {"METRO",    C_CYAN,    8},
         {"ABOUT",    C_GRAY,    10},
+        // page 4 — filesystem & connectivity
+        {"FILES",    C_CYAN,    3}, {"EDITOR",   C_YELLOW,  7},
+        {"DRAW",     C_PURPLE,  4}, {"AUDIO R",  C_GREEN,   2},
+        {"POMODORO", C_ACCENT,  8}, {"WEATHER",  C_CYAN,    11},
+        {"NTP",      0x035Fu,   0},
     };
 
 public:
@@ -45,8 +50,8 @@ public:
         int cnt  = min(PER_PAGE, TOTAL - base);
         for (int i=0; i<cnt; i++) _drawCell(i, base+i, (base+i)==sel);
         // page dots
-        for (int p=0; p<3; p++) {
-            spr_fillCircle(108+p*12, CNT_Y+CNT_H-5, 3, (p==page)?C_ACCENT:C_PANEL);
+        for (int p=0; p<4; p++) {
+            spr_fillCircle(102+p*12, CNT_Y+CNT_H-5, 3, (p==page)?C_ACCENT:C_PANEL);
         }
     }
 
@@ -142,4 +147,4 @@ private:
         }
     }
 };
-constexpr HomeScreen::AppInfo HomeScreen::APPS[23];
+constexpr HomeScreen::AppInfo HomeScreen::APPS[30];
