@@ -5,7 +5,7 @@ extern int g_launchApp;
 
 class FluxOS {
 public:
-    static constexpr int MAX_APPS = 20;
+    static constexpr int MAX_APPS = 25;
     Screen* apps[MAX_APPS];
     int     numApps = 0;
     int     curApp  = -1;
