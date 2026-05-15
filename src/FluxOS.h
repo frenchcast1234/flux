@@ -1,13 +1,11 @@
 #pragma once
 #include "screens/Screen.h"
-#include <LittleFS.h>
 
-extern int  g_launchApp;
-extern char g_openFile[64];
+extern int g_launchApp;
 
 class FluxOS {
 public:
-    static constexpr int MAX_APPS = 32;
+    static constexpr int MAX_APPS = 25;
     Screen* apps[MAX_APPS];
     int     numApps = 0;
     int     curApp  = -1;
@@ -19,10 +17,6 @@ public:
         M5.begin();
         M5.Lcd.setRotation(3);
         M5.Lcd.setBrightness(160);
-        LittleFS.begin(true);
-        LittleFS.mkdir("/notes");
-        LittleFS.mkdir("/drawings");
-        LittleFS.mkdir("/audio");
         _drawBoot();
         setApp(0);
     }
@@ -78,18 +72,16 @@ public:
         static const char* NAMES[] = {
             "FLUX","CLOCK","GYRO","AUDIO","WIFI","SNAKE","PONG",
             "IR","CONFIG","STOPWATCH","LEVEL","SYSMON","LIGHT",
-            "REACTION","BLE","DICE","ALARM",
-            "TETRIS","BREAKOUT","FLAPPY","CALC","TALLY","METRO","ABOUT",
-            "FILES","EDITOR","DRAW","AUDIO R","POMODORO","WEATHER","NTP"
+            "REACTION","BLE","DICE","ALARM"
         };
         M5.Lcd.fillRect(0, 0, SCR_W, SB_H, C_PANEL);
         M5.Lcd.drawFastHLine(0, SB_H-1, SCR_W, C_ACCENT);
 
-        // app name + page dot
+        // app name
         M5.Lcd.setTextColor(C_CYAN, C_PANEL);
         M5.Lcd.setTextSize(1);
         M5.Lcd.setCursor(4, 5);
-        if (curApp >= 0 && curApp < 31) M5.Lcd.print(NAMES[curApp]);
+        if (curApp >= 0 && curApp < 17) M5.Lcd.print(NAMES[curApp]);
 
         // time
         m5::rtc_time_t t; M5.Rtc.getTime(&t);
@@ -131,7 +123,7 @@ private:
             for (int y = 0; y < SCR_H; y += 20)
                 M5.Lcd.fillRect(x-1, y-1, 3, 3, C_DGRAY);
 
-        // glow layers for "FLUX" (draw at small offsets in darker colours)
+        // glow layers for "FLUX"
         const uint16_t glows[] = { 0x3003u, 0x600Bu, 0xA015u };
         for (uint16_t gc : glows) {
             for (int8_t dx = -2; dx <= 2; dx++) for (int8_t dy = -2; dy <= 2; dy++) {
@@ -142,7 +134,7 @@ private:
             }
         }
 
-        // main FLUX text — animate letter by letter
+        // main FLUX text
         const char* flux = "FLUX";
         M5.Lcd.setTextSize(4);
         for (int i = 0; i < 4; i++) {
@@ -160,11 +152,11 @@ private:
         M5.Lcd.setCursor(176, 28);
         M5.Lcd.print("OS");
 
-        // horizontal separator
+        // separator
         M5.Lcd.drawFastHLine(40, 68, 200, C_ACCENT);
         M5.Lcd.drawFastHLine(40, 69, 200, C_ACCENT);
 
-        // subtitle lines
+        // subtitle
         M5.Lcd.setTextColor(C_CYAN, C_BLACK);
         M5.Lcd.setTextSize(1);
         M5.Lcd.setCursor(65, 74);  M5.Lcd.print("v2.0  M5StickC Plus2");
@@ -199,7 +191,6 @@ private:
 
     // ── power menu (blocking) ─────────────────────────────────────────────
     void _showPowerMenu() {
-        // dim overlay
         M5.Lcd.fillRect(30, 25, 180, 90, C_PANEL);
         M5.Lcd.drawRect(30, 25, 180, 90, C_ACCENT);
         M5.Lcd.drawRect(31, 26, 178, 88, C_ACCENT);
@@ -241,7 +232,7 @@ private:
         M5.Lcd.print(_toastBuf);
     }
 
-    // ── battery indicator ────────────────────────────────────────────────
+    // ── battery indicator ─────────────────────────────────────────────────
     void _drawBatt(int x, int y) {
         int pct  = M5.Power.getBatteryLevel();
         bool chg = M5.Power.isCharging();
@@ -250,7 +241,7 @@ private:
         M5.Lcd.fillRect(x+30, y+4, 3, 4, C_GRAY);
         int fill = map(constrain(pct,0,100), 0, 100, 0, 28);
         M5.Lcd.fillRect(x+1, y+1, fill, 10, col);
-        if (chg) { // lightning bolt
+        if (chg) {
             M5.Lcd.setTextColor(C_WHITE, col > 0 ? col : C_PANEL);
             M5.Lcd.setTextSize(1);
             M5.Lcd.setCursor(x+10, y+2);
