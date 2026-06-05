@@ -1,2 +1,2 @@
 # flux
-An tiny operating system for M5Stick Cplus2.
+Some cool and useless apps for m5stick cplus2.
